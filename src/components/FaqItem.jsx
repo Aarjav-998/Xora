@@ -1,7 +1,25 @@
 import clsx from "clsx";
 import { useState } from "react";
-import { SlideDown } from "react-slidedown";
-import "react-slidedown/lib/slidedown.css";
+import { motion, AnimatePresence } from "framer-motion";
+
+const SlideDown = ({ isOpen, children }) => {
+  return (
+    <AnimatePresence initial={false}>
+      {isOpen && (
+        <motion.div
+          key="content"
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          style={{ overflow: "hidden" }}
+        >
+          {children}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 const FaqItem = ({ item, index }) => {
   const [activeId, setActiveId] = useState(null);
@@ -13,7 +31,7 @@ const FaqItem = ({ item, index }) => {
       <div
         className="group relative flex cursor-pointer items-center justify-between gap-10 px-7"
         onClick={() => {
-          setActiveId(activeId === item.id ? null : item.id);
+          setActiveId(active ? null : item.id);
         }}
       >
         <div className="flex-1">
@@ -41,10 +59,8 @@ const FaqItem = ({ item, index }) => {
         </div>
       </div>
 
-      <SlideDown>
-        {activeId === item.id && (
-          <div className="body-3 px-7 py-3.5">{item.answer}</div>
-        )}
+      <SlideDown isOpen={active}>
+        <div className="body-3 px-7 py-3.5">{item.answer}</div>
       </SlideDown>
 
       <div
@@ -59,4 +75,5 @@ const FaqItem = ({ item, index }) => {
     </div>
   );
 };
+
 export default FaqItem;
